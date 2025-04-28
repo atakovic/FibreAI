@@ -4,16 +4,16 @@ import io
 import tensorflow as tf
 
 from PIL import Image
-from tensorflow import keras
-from tensorflow.keras import layers
-from tensorflow.keras.models import load_model, Sequential
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.callbacks import Callback
+#from tensorflow import keras
+#from tensorflow.keras import layers
+#from tensorflow.keras.models import load_model, Sequential
+#from tensorflow.keras.preprocessing.image import ImageDataGenerator
+#from sklearn.model_selection import train_test_split
+#from tensorflow.keras.utils import to_categorical
+#from tensorflow.keras.callbacks import Callback
 from plotly import graph_objects as go
 import matplotlib.pyplot as plt
-import seaborn as sns
+#import seaborn as sns
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 from PIL import Image
 import base64
