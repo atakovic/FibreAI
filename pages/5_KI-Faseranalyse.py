@@ -131,26 +131,41 @@ def startAnalyse(model, uploaded_image, img_size):
 st.title("KI-Faseranalyse")
 
 # Schritt 1: Buttonklick speichern
-if "choose_folder" not in st.session_state:
-    st.session_state.choose_folder = False
+#if "choose_folder" not in st.session_state:
+#    st.session_state.choose_folder = False
 
-if st.button("Bildordner auswählen"):
-    st.session_state.choose_folder = True
+#if st.button("Bildordner auswählen"):
+#    st.session_state.choose_folder = True
 
 # Schritt 2: Wenn Button gedrückt wurde -> Dialog öffnen
-if st.session_state.choose_folder:
-    if os.name == 'nt':  # Windows
-        initial_dir = "C:/"
-    elif os.name == 'posix':  # Unix/Linux/macOS
-        initial_dir = "/home/usr/"
-    else:
-        initial_dir = "/"
+#if st.session_state.choose_folder:
+#    if os.name == 'nt':  # Windows
+#        initial_dir = "C:/"
+#    elif os.name == 'posix':  # Unix/Linux/macOS
+#        initial_dir = "/home/usr/"
+#    else:
+#        initial_dir = "/"
 
-    folder_selected = filedialog.askdirectory(initialdir=initial_dir)
+#    folder_selected = filedialog.askdirectory(initialdir=initial_dir)
 
-    if folder_selected:
-        pathtomodel = os.path.join(folder_selected, "model_saved.txt")
-        if os.path.exists(pathtomodel):
+#    if folder_selected:
+#        pathtomodel = os.path.join(folder_selected, "model_saved.txt")
+#        if os.path.exists(pathtomodel):
+#            st.session_state.pathtomodel = pathtomodel
+#            with open(pathtomodel) as f:
+#                model_path = f.read()
+#                st.session_state.pathtomodel = model_path
+#                st.success(f"KI wurde erfolgreich geladen")
+#        else:
+#            st.warning("Du hast kein trainiertes Modell gefunden. Bitte versuche es erneut.")
+
+    # Danach Button-Zustand zurücksetzen
+    #st.session_state.choose_folder = False
+
+folder_selected = st.textinput(label="Wähle hier den Bildordner aus, den du beim Training für die KI verwendet hast.", placeholder="/home/usr/meinBilderOrdner")
+if folder_selected:
+    pathtomodel = os.path.join(folder_selected, "model_saved.txt")
+    if os.path.exists(pathtomodel):
             st.session_state.pathtomodel = pathtomodel
             with open(pathtomodel) as f:
                 model_path = f.read()
@@ -158,9 +173,8 @@ if st.session_state.choose_folder:
                 st.success(f"KI wurde erfolgreich geladen")
         else:
             st.warning("Du hast kein trainiertes Modell gefunden. Bitte versuche es erneut.")
+    
 
-    # Danach Button-Zustand zurücksetzen
-    st.session_state.choose_folder = False
 
 if st.session_state.pathtomodel:
     st.info(st.session_state.pathtomodel)
