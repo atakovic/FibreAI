@@ -14,7 +14,7 @@ from io import BytesIO
 
 # Absoluter oder relativer Pfad zur Datei
 #import bildverarbeitungFunction
-file_path = os.path.join(os.path.dirname(__file__), '/opt/lampp/htdocs/Webseite_SHK/streamlit/pages/bibliotheken/bildverarbeitungFunction.py')
+file_path = os.path.join(os.path.dirname(__file__), 'pages/bibliotheken/bildverarbeitungFunction.py')
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("bildverarbeitungFunction", file_path)
@@ -113,7 +113,7 @@ st.subheader("Auswahl der einzelnen Klassen:")
 # Reale Daten - WP_Textil
 st.subheader("Reale Daten")
 A1, A2, A3, A4, A5, A6, A7 = st.columns(7)
-link = "/opt/lampp/htdocs/Webseite_SHK/streamlit/BildDatenbank/Real/"
+link = "BildDatenbank/Real/"
 with A1:
     newlink = link + "Flachs/FL0001.tif"
     image = changepicturetosee(newlink, screen)
@@ -144,7 +144,7 @@ with A7:
     st.image(image)
 
 A1, A2, A3, A4, A5, A6, A7 = st.columns(7)
-BilderPath = "/opt/lampp/htdocs/Webseite_SHK/streamlit/BildDatenbank/Real/"
+BilderPath = "BildDatenbank/Real/"
 with A1:
     bvf.templateStrings(DBKlassen, BilderPath + "Flachs")
 with A2:
@@ -178,7 +178,7 @@ with A7:
 
 # Synthetische Daten - Synthetic
 st.subheader("Synthetische Daten")
-link = "/opt/lampp/htdocs/Webseite_SHK/streamlit/BildDatenbank/Synthetisch/"
+link = "BildDatenbank/Synthetisch/"
 B1, B2, B3, B4, B5, B6, B7 = st.columns(7)
 with B1:
     newlink = link + "Flachs/FL0001.jpg"
@@ -211,7 +211,7 @@ with B7:
 
 
 B1, B2, B3, B4, B5, B6, B7 = st.columns(7)
-BilderPath = "/opt/lampp/htdocs/Webseite_SHK/streamlit/BildDatenbank/Synthetisch/"
+BilderPath = "BildDatenbank/Synthetisch/"
 with B1:
     bvf.templateStrings(DBKlassen, BilderPath + "Flachs")
 with B2:
@@ -268,7 +268,7 @@ with col2:
 #-------------------------------------------------------------------------------------------
 ### Seitenleiste
 # Öffne das Bild
-image = Image.open("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/fibreai.png")
+image = Image.open("webpictures/fibreai.png")
 
 # Konvertiere das Bild in Base64
 buffer = BytesIO()
@@ -278,7 +278,7 @@ data = base64.b64encode(buffer.read()).decode("utf-8")
 
 # Benutzerdefiniertes HTML mit Base64-Bild
 #st.sidebar.header("FibreAI")
-image = Image.open("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/fibreai.png")
+image = Image.open("webpictures/fibreai.png")
 st.sidebar.image(image)
 
 
