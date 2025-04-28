@@ -6,10 +6,10 @@ import PIL
 from PIL import Image
 import base64
 from io import BytesIO
-import tensorflow as tf
-from tensorflow.keras.applications.vgg16 import preprocess_input
+#import tensorflow as tf
+#from tensorflow.keras.applications.vgg16 import preprocess_input
 from pathlib import Path
-from tkinter import filedialog
+#from tkinter import filedialog
 import importlib.util
 from ultralytics import YOLO
 #------------------------------------------------------------------------------------------
