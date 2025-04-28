@@ -3,7 +3,7 @@ from PIL import Image
 import base64
 from io import BytesIO
 from pathlib import Path
-from tkinter import filedialog
+#from tkinter import filedialog
 #------------------------------------------------------------------------------------------
 import importlib.util
 import os
@@ -11,7 +11,7 @@ import os
 
 # Absoluter oder relativer Pfad zur Datei
 #import trainModelPython
-file_path = os.path.join(os.path.dirname(__file__), '/opt/lampp/htdocs/Webseite_SHK/streamlit/pages/bibliotheken/trainModelPython.py')
+file_path = os.path.join(os.path.dirname(__file__), 'pages/bibliotheken/trainModelPython.py')
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("trainModelPython", file_path)
@@ -19,7 +19,7 @@ tmp = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(tmp)
 
 #import bildverarbeitungFunction
-file_path = '/opt/lampp/htdocs/Webseite_SHK/streamlit/pages/bibliotheken/bildverarbeitungFunction.py'
+file_path = 'pages/bibliotheken/bildverarbeitungFunction.py'
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("bildverarbeitungFunction", file_path)
@@ -209,7 +209,7 @@ with st.container():
 #-------------------------------------------------------------------------------------------
 ### Seitenleiste
 # Öffne das Bild
-image = Image.open("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/fibreai.png")
+image = Image.open("webpictures/fibreai.png")
 
 # Konvertiere das Bild in Base64
 buffer = BytesIO()
@@ -219,7 +219,7 @@ data = base64.b64encode(buffer.read()).decode("utf-8")
 
 # Benutzerdefiniertes HTML mit Base64-Bild
 #st.sidebar.header("FibreAI")
-image = Image.open("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/fibreai.png")
+image = Image.open("webpictures/fibreai.png")
 st.sidebar.image(image)
 
 #-------------------------------------------------------------------------------------------
