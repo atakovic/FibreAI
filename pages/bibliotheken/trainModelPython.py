@@ -30,7 +30,7 @@ import importlib.util
 #---------------------------------------------------------
 # Absoluter oder relativer Pfad zur Datei
 #import bildverarbeitungFunction
-file_path = '/opt/lampp/htdocs/Webseite_SHK/streamlit/pages/bibliotheken/bildverarbeitungFunction.py'
+file_path = 'pages/bibliotheken/bildverarbeitungFunction.py'
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("bildverarbeitungFunction", file_path)
