@@ -11,7 +11,7 @@ import os
 
 # Absoluter oder relativer Pfad zur Datei
 #import trainModelPython
-file_path = os.path.join(os.path.dirname(__file__), 'pages/bibliotheken/trainModelPython.py')
+file_path = os.path.join(os.path.dirname(__file__), 'bibliotheken/trainModelPython.py')
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("trainModelPython", file_path)
@@ -19,7 +19,7 @@ tmp = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(tmp)
 
 #import bildverarbeitungFunction
-file_path = 'pages/bibliotheken/bildverarbeitungFunction.py'
+file_path = 'bibliotheken/bildverarbeitungFunction.py'
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("bildverarbeitungFunction", file_path)
