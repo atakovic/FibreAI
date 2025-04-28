@@ -82,6 +82,8 @@ def changepicturetosee(link, screen):
         return image
 
 
+#google-BilderDatenbank-Link
+glink = "https://drive.google.com/drive/folders/1TR9XjiEfnUjYdsVBJhheC_kaywVIK3Gn?usp=sharing"
 
 datenbank = []
 datenbank_bilderPath = []
@@ -113,7 +115,7 @@ st.subheader("Auswahl der einzelnen Klassen:")
 # Reale Daten - WP_Textil
 st.subheader("Reale Daten")
 A1, A2, A3, A4, A5, A6, A7 = st.columns(7)
-link = "BildDatenbank/Real/"
+link = glink + "/Real/"
 with A1:
     newlink = link + "Flachs/FL0001.tif"
     image = changepicturetosee(newlink, screen)
