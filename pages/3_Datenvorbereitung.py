@@ -7,13 +7,13 @@ import base64
 from io import BytesIO
 import os
 from pathlib import Path
-from tkinter import filedialog
+#from tkinter import filedialog
 from datetime import datetime
 
 #---------------------------------------------------------
 # Absoluter oder relativer Pfad zur Datei
 #import bildverarbeitungFunction
-file_path = '/opt/lampp/htdocs/Webseite_SHK/streamlit/pages/bibliotheken/bildverarbeitungFunction.py'
+file_path = 'pages/bibliotheken/bildverarbeitungFunction.py'
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("bildverarbeitungFunction", file_path)
@@ -388,7 +388,7 @@ st.session_state.zielPath = zielPath
 #-------------------------------------------------------------------------------------------
 ### Seitenleiste
 # Öffne das Bild
-image = Image.open("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/fibreai.png")
+image = Image.open("webpictures/fibreai.png")
 
 # Konvertiere das Bild in Base64
 buffer = BytesIO()
@@ -398,7 +398,7 @@ data = base64.b64encode(buffer.read()).decode("utf-8")
 
 # Benutzerdefiniertes HTML mit Base64-Bild
 #st.sidebar.header("FibreAI")
-image = Image.open("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/fibreai.png")
+image = Image.open("webpictures/fibreai.png")
 st.sidebar.image(image)
 
 
