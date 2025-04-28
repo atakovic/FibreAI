@@ -14,7 +14,8 @@ from io import BytesIO
 
 # Absoluter oder relativer Pfad zur Datei
 #import bildverarbeitungFunction
-file_path = os.path.join(os.path.dirname(__file__), 'pages/bibliotheken/bildverarbeitungFunction.py')
+#file_path = os.path.join(os.path.dirname(__file__), 'pages/bibliotheken/bildverarbeitungFunction.py')
+file_path = os.path.join(os.path.dirname(__file__), 'bibliotheken/bildverarbeitungFunction.py')
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("bildverarbeitungFunction", file_path)
