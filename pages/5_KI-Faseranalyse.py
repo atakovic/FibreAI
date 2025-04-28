@@ -233,4 +233,5 @@ data = base64.b64encode(buffer.read()).decode("utf-8")
 
 # Benutzerdefiniertes HTML mit Base64-Bild
 #st.sidebar.header("FibreAI")
+image = Image.open("webpictures/fibreai.png")
 st.sidebar.image(image)
