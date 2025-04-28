@@ -1,0 +1,15 @@
+pip install opencv-python
+pip install opencv-contrib-python
+pip install streamlit
+pip install matplotlib
+pip install numpy
+pip install joblib
+pip install pillow
+pip install pathlib
+pip install tensorflow
+pip install seaborn
+pip install --upgrade scikit-learn
+pip3 install streamlit_js_eval
+pip install ultralytics
+
+sudo apt install python3-tk
