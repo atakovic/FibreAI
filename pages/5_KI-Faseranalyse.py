@@ -84,7 +84,7 @@ def showClassImage(predicted):
     """Zeigt das Bild der vorhergesagten Klasse an."""
     imageWidth = 250
     if predicted:
-        st.image(f"/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/{predicted}.png", width=imageWidth)
+        st.image(f"webpictures/{predicted}.png", width=imageWidth)
     else:
         st.image("", width=imageWidth)
 
@@ -176,9 +176,9 @@ with col1:
     imageWidth = 250
     # KI Statusbild anzeigen
     if not st.session_state.ki_available:
-        st.image("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/KI_Schrift_Nact.png", width=imageWidth)
+        st.image("webpictures/KI_Schrift_Nact.png", width=imageWidth)
     else:
-        st.image("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/KI_Schrift_Act.png", width=imageWidth)
+        st.image("webpictures/KI_Schrift_Act.png", width=imageWidth)
 
     # Analysebereich
 
@@ -210,5 +210,5 @@ with col2:
 # Seitenleiste
 
 # Logo in Seitenleiste
-sidebar_image = Image.open("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/fibreai.png")
+sidebar_image = Image.open("webpictures/fibreai.png")
 st.sidebar.image(sidebar_image)
