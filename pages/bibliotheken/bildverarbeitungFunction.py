@@ -75,7 +75,7 @@ def templateStrings(dbNames, BilderPath, allowed_extensions=None):
 def getdatenbankBilderPath(datenbank_bilderPath, datenbank, number):  # erstellt Datenbank-Verzeichnisspfade
     #print("getdatenbankBilderPath")
     datenbank_bilderPath.clear()
-    bilderpath = "/opt/lampp/htdocs/Webseite_SHK/streamlit/BildDatenbank/"
+    bilderpath = "BildDatenbank/"
     if number == 1:
         for daten in datenbank:
             secondName = daten[-4:]  # Real, Synt
