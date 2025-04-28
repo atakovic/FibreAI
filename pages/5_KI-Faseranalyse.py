@@ -220,9 +220,17 @@ with col2:
         st.image(st.session_state.image, width=150)
 
 
-#------------------------------------------------------------------------------------------
-# Seitenleiste
+#-------------------------------------------------------------------------------------------
+### Seitenleiste
+# Öffne das Bild
+image = Image.open("webpictures/fibreai.png")
 
-# Logo in Seitenleiste
-sidebar_image = Image.open("webpictures/fibreai.png")
-st.sidebar.image(sidebar_image)
+# Konvertiere das Bild in Base64
+buffer = BytesIO()
+image.save(buffer, format="PNG")
+buffer.seek(0)
+data = base64.b64encode(buffer.read()).decode("utf-8")
+
+# Benutzerdefiniertes HTML mit Base64-Bild
+#st.sidebar.header("FibreAI")
+st.sidebar.image(image)
