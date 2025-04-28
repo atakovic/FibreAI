@@ -10,4 +10,4 @@ seaborn
 scikit-learn
 streamlit-js-eval
 ultralytics
-
+ml_dtypes
