@@ -13,7 +13,7 @@ from datetime import datetime
 #---------------------------------------------------------
 # Absoluter oder relativer Pfad zur Datei
 #import bildverarbeitungFunction
-file_path = 'bibliotheken/bildverarbeitungFunction.py'
+file_path = 'pages/bibliotheken/bildverarbeitungFunction.py'
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("bildverarbeitungFunction", file_path)
