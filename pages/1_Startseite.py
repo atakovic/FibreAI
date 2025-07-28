@@ -40,20 +40,20 @@ def main():
     # Anzeige der Mitarbeiter Fotos
     A, B, C, D, E = st.columns(5)
     with A:
-        st.image("webpictures/beer.png", width=image_width)
+        st.image("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/beer.png", width=image_width)
     with B:
-        st.image("webpictures/hellweg.png", width=image_width)
+        st.image("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/hellweg.png", width=image_width)
     with C:
-        st.image("webpictures/tabak.png", width=image_width)
+        st.image("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/tabak.png", width=image_width)
     with D:
-        st.image("webpictures/radau.png", width=image_width)
+        st.image("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/radau.png", width=image_width)
     with E:
-        st.image("webpictures/brodka.png", width=image_width)
+        st.image("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/brodka.png", width=image_width)
 
     # -------------------------------------------------------------------------------------------
     ### Seitenleiste
     # Öffne das Bild
-    image = Image.open("webpictures/fibreai.png")
+    image = Image.open("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/fibreai.png")
 
     # Konvertiere das Bild in Base64
     buffer = BytesIO()
@@ -61,10 +61,7 @@ def main():
     buffer.seek(0)
     data = base64.b64encode(buffer.read()).decode("utf-8")
 
-    # Benutzerdefiniertes HTML mit Base64-Bild
-    #st.sidebar.header("FibreAI")
-    image = Image.open("webpictures/fibreai.png")
-    st.sidebar.image(image)
+    st.logo(image, icon_image=image, size="large")
 
 
 

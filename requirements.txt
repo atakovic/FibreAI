@@ -8,5 +8,8 @@ tensorflow
 seaborn
 scikit-learn
 streamlit-js-eval
+streamlit-extras
 ultralytics
 ml_dtypes
+fpdf
+st-theme

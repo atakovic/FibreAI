@@ -3,7 +3,7 @@ from PIL import Image
 import base64
 from io import BytesIO
 from pathlib import Path
-#from tkinter import filedialog
+from tkinter import filedialog
 #------------------------------------------------------------------------------------------
 import importlib.util
 import os
@@ -11,7 +11,7 @@ import os
 
 # Absoluter oder relativer Pfad zur Datei
 #import trainModelPython
-file_path = os.path.join(os.path.dirname(__file__), 'bibliotheken/trainModelPython.py')
+file_path = os.path.join(os.path.dirname(__file__), '/opt/lampp/htdocs/Webseite_SHK/streamlit/pages/bibliotheken/trainModelPython.py')
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("trainModelPython", file_path)
@@ -19,7 +19,7 @@ tmp = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(tmp)
 
 #import bildverarbeitungFunction
-file_path = 'bibliotheken/bildverarbeitungFunction.py'
+file_path = '/opt/lampp/htdocs/Webseite_SHK/streamlit/pages/bibliotheken/bildverarbeitungFunction.py'
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("bildverarbeitungFunction", file_path)
@@ -65,24 +65,12 @@ if "zielPath" not in st.session_state:
     st.session_state.zielPath = ""
 if "pathtomodel" not in st.session_state:
     st.session_state.pathtomodel = ""
+if "ki_training_set" not in st.session_state:
+    st.session_state.ki_training_set = False
 
 try:
     if st.session_state.zielPath:
         zielPath = st.session_state.zielPath
-        #DVbKlassen, DVbKlassenExtended = bvf.getNamesofDir(zielPath)
-        #anzahl = bvf.lookforpictures(zielPath)
-    #if DVbKlassen:
-    #    st.success(f"Folgende Klassen wurden aus vorheriger Bearbeitung gefunden: **{DVbKlassenExtended}** mit **{anzahl} Gesamtbildern**.")
-    #    Classchoice = st.pills(
-    #        label="Sollen die Klassen, samt Bildern übernommen werden?",
-    #        options = ["Ja", "Nein"],
-    #        selection_mode="single",
-    #        default=None,
-    #    )
-    #    if Classchoice == "Ja":
-    #        class_names_changer = True
-    #    if Classchoice == "Nein":
-    #        class_names_changer = False
 
 
 except:
@@ -93,6 +81,76 @@ except:
 
 #------------------------------------------------------------------------------------------
 st.title("KI-Training")
+
+#---------------------------------------------------------
+#---------------------------------------------------------
+
+# Anleitung
+# Lese das App-Theme aus
+from streamlit_theme import st_theme
+theme = st_theme()
+backgroundcolor = theme['backgroundColor']
+#st.write(theme['backgroundColor'])
+
+# Fester Header
+header = st.container()
+header.subheader("Anleitung")
+header.write("""<div class='fixed-header'/>""", unsafe_allow_html=True)
+
+
+### Custom CSS for the sticky header
+st.markdown(
+    f"""
+    <style>
+        div[data-testid="stVerticalBlock"] div:has(div.fixed-header) {{
+            position: sticky;
+            top: 2.875rem;
+            background-color: {backgroundcolor};
+            z-index: 999;
+        }}
+        .fixed-header {{
+            border-bottom: 0px solid black;
+        }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+# ---------------------------------------------------------
+# Info-Text VOR dem Form-Container
+if "Anleitung_int_KI_Training" not in st.session_state:
+    st.session_state.Anleitung_int_KI_Training = 0
+
+Anleitung = [
+    "Anleitung",
+    "1. Wähle deine :blue[vorverarbeiteten] Bilder über den Button :blue['Bildordner auswählen'] aus.\n\n Hinweis: Der Ordner muss folgende Unterordner enthalten: :orange[train], :orange[val] (optional: :orange[test]).",
+    "2. Wähle das gewünschte Modell aus – aktuell verfügbar: :blue[YOLOv11] und :blue[YOLOv8].",
+    "3. Lege die Trainingsparameter fest, z.B.: :blue['Epoche'] und :blue['Batchgröße'].",
+    "4. Starte das Training über den Button :blue['Trainieren']."
+]
+
+# Anzeige
+header.info(Anleitung[st.session_state.Anleitung_int_KI_Training], icon="ℹ️", width="stretch")
+
+with header.form("Anleitung"):
+    # Buttons
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.session_state.Anleitung_int_KI_Training > 0:
+            zurück_hide = False
+        else:
+            zurück_hide = True
+        if st.form_submit_button("← zurück", use_container_width=True, disabled=zurück_hide):
+            st.session_state.Anleitung_int_KI_Training -= 1
+
+    with col2:
+        if st.session_state.Anleitung_int_KI_Training < len(Anleitung) - 1:
+            if st.form_submit_button("vor →", use_container_width=True):
+                st.session_state.Anleitung_int_KI_Training += 1
+
+
+#---------------------------------------------------------
+#---------------------------------------------------------
+
 st.write("Hier kannst du deine bearbeiteten Bilder nutzen und hochladen, um deine eigene KI auf die entsprechenden Klassen deiner Wahl zu trainieren.")
 
 # Hauptbereich für Klassen
@@ -103,49 +161,37 @@ st.write("Die Klassen werden durch die Unterordner in **train** & **val** erkann
 #Anzeigen der Uploadboxen wenn Klassen gewählt werden
 #SelectionKlassen = bvf.processDBselectionUploadBox(DBKlassen)
 #UploadString = st.text_input(label="Gib hier die Adresse des Bilderordners ein:", )
-directory_button = st.button("Bildordner auswählen")
+directory_button_help = "Beim drücken des Buttons wählst du den Bildordner aus, der fertig bearbeiteten Bilder zum trainieren der KI aus. \n\n In der Regel, ist es der gleiche Ordner, wie auf der Seite 3: **Datenvorbereitung**. \n\n Beispiel: /home/usr/Downloads/FibreAI_XXXX-XX-XX"
+directory_button = st.button("Bildordner auswählen", help=directory_button_help)
 if directory_button:
     # Überprüfe das Betriebssystem
     if os.name == 'nt':  # Windows
         initial_dir = "C:/"
     elif os.name == 'posix':  # Unix oder Linux (inkl. macOS)
-        initial_dir = "/home/usr/"
+        initial_dir = "~/"
     else:
         initial_dir = "/"
-    zielPath = filedialog.askdirectory(initialdir=initial_dir)
-    st.write(zielPath)
-    st.session_state.zielPath = zielPath
+    try:
+        zielPath = filedialog.askdirectory(initialdir=initial_dir)
+        zielPath_dir = os.listdir(zielPath)
+        if "train" in zielPath_dir and "val" in zielPath_dir:
+            st.write(zielPath)
+            st.session_state.zielPath = zielPath
+        else:
+            st.warning("Der Dateipfad enthält keine Ordner :red[train & val], bitte suche einen neuen Ordner aus.")
+            zielPath = ""
+            st.session_state.zielPath = ""
+    except:
+        st.warning("Der Dateipfad enthält keine Ordner :red[train & val], bitte suche einen neuen Ordner aus.")
+        zielPath = ""
+        st.session_state.zielPath = ""
+
 
 if st.session_state.zielPath:
     zielPath = st.session_state.zielPath
     dir_names = bvf.get_all_unique_folder_names(zielPath)
     anzahl = bvf.count_images_in_folder(zielPath)
     st.success(f"Folgende Klassen wurden gefunden: **{dir_names}** mit **{anzahl} Gesamtbildern**.")
-
-#if SelectionKlassen:
-    #Uploadbox = bvf.showuploadBoxen(SelectionKlassen) #UploadBox für die Klassen
-    #st.session_state["Uploadbox"] = Uploadbox
-
-
-
-#if DVbKlassen:
-#    for i in DVbKlassen:
-#        st.write(i)
-#        if i in st.session_state:
-#            st.write(st.session_state[i])
-#            eigeneKlassen.append([i], st.session_state[Uploadbox][i])
-#if SelectionKlassen:
-#    for i in SelectionKlassen:
-#        if i not in DVbKlassen:
-#            eigeneKlassen.append(i)
-#if eigeneKlassen:
-#    for klasse in SelectionKlassen:
-#        uploaded_file = st.session_state.get(klasse) # interner Speicherort und Ablage der Dateien
-#        st_klasse = st.session_state[str(klasse)]
-#        groesse = len(st_klasse)
-#        anzahl += groesse
-#    #st.info(f"Alle Klassen die, die KI zur Verfügung erhält: **{eigeneKlassen}**. \n\n Bilder-Gesamt: {anzahl}")
-
 
 
 #-------------------------------------------------------------------------------------------
@@ -183,13 +229,19 @@ with batch:
 
 
 startTraining = False
-trainButton = st.button("Trainieren")
-if trainButton:
-    startTraining = True
+trainButton_help = "Beim drücken startest Du das Training der KI."
+trainButton = st.button("Trainieren", help=trainButton_help)
+try:
+    if trainButton and zielPath != "":
+        startTraining = True
+except:
+    st.warning("Dein Zielpfad scheint noch nicht korrekt definiert zu sein für das Training.")
 
 
 with st.container():
     if (startTraining):
+
+        st.session_state.ki_training_set = True #wichtig für die PDF
 
         # Werte aus Session-State übernehmen
         image_size = st.session_state.image_size
@@ -208,19 +260,8 @@ with st.container():
 
 #-------------------------------------------------------------------------------------------
 ### Seitenleiste
-# Öffne das Bild
-image = Image.open("webpictures/fibreai.png")
-
-# Konvertiere das Bild in Base64
-buffer = BytesIO()
-image.save(buffer, format="PNG")
-buffer.seek(0)
-data = base64.b64encode(buffer.read()).decode("utf-8")
-
-# Benutzerdefiniertes HTML mit Base64-Bild
-#st.sidebar.header("FibreAI")
-image = Image.open("webpictures/fibreai.png")
-st.sidebar.image(image)
+image = Image.open("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/fibreai.png")
+st.logo(image, icon_image=image, size="large")
 
 #-------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------
@@ -240,5 +281,3 @@ st.sidebar.image(image)
 
 #schaue dass durch Auswahl Pill: Ja eine Klasse gespeichert wird und die Klasse SelectionKlassen zusammen mit DVbKlassen,
 #sich für die Nutzung der Bilder hochladen lässt.
-
-st.write(st.session_state)

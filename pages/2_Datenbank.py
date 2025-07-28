@@ -14,7 +14,7 @@ from io import BytesIO
 
 # Absoluter oder relativer Pfad zur Datei
 #import bildverarbeitungFunction
-file_path = os.path.join(os.path.dirname(__file__), 'bibliotheken/bildverarbeitungFunction.py')
+file_path = os.path.join(os.path.dirname(__file__), '/opt/lampp/htdocs/Webseite_SHK/streamlit/pages/bibliotheken/bildverarbeitungFunction.py')
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("bildverarbeitungFunction", file_path)
@@ -82,8 +82,6 @@ def changepicturetosee(link, screen):
         return image
 
 
-#google-BilderDatenbank-Link
-glink = "https://drive.google.com/drive/folders/1TR9XjiEfnUjYdsVBJhheC_kaywVIK3Gn?usp=sharing"
 
 datenbank = []
 datenbank_bilderPath = []
@@ -97,6 +95,9 @@ if "datenbank" not in st.session_state:
 if "datenbank_bilderPath" not in st.session_state:
     st.session_state.datenbank_bilderPath = []
     st.session_state.datenbank_bilderPath = datenbank_bilderPath
+if "datenbank_set" not in st.session_state:
+    st.session_state.datenbank_set = False
+    # wichtig für die PDF
 
 
 
@@ -104,6 +105,79 @@ if "datenbank_bilderPath" not in st.session_state:
 #---------------------------------------------------------
 
 st.title("Datenbank")
+
+#---------------------------------------------------------
+#---------------------------------------------------------
+# Anleitung
+# Lese das App-Theme aus
+from streamlit_theme import st_theme
+theme = st_theme()
+backgroundcolor = theme['backgroundColor']
+#st.write(theme['backgroundColor'])
+
+# Fester Header
+header = st.container()
+header.subheader("Anleitung")
+header.write("""<div class='fixed-header'/>""", unsafe_allow_html=True)
+
+
+### Custom CSS for the sticky header
+st.markdown(
+    f"""
+    <style>
+        div[data-testid="stVerticalBlock"] div:has(div.fixed-header) {{
+            position: sticky;
+            top: 2.875rem;
+            background-color: {backgroundcolor};
+            z-index: 999;
+        }}
+        .fixed-header {{
+            border-bottom: 0px solid black;
+        }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+#---------------------------------------------------------
+# Initialisieren, falls noch nicht vorhanden
+if "Anleitung_int_Datenbank" not in st.session_state:
+    st.session_state.Anleitung_int_Datenbank = 0
+
+Anleitung = [
+        "Anleitung",
+        "1. Wähle die gewünschten Daten aus, indem du die Checkboxen der jeweiligen Klassen aktivierst.",
+        "2. Du kannst zwischen realen und synthetischen Daten wählen – alle auswählen, abwählen oder individuell kombinieren. Die Entscheidung liegt bei dir.",
+        "3. Sobald unten angezeigt wird, dass die Daten erfolgreich ausgewählt wurden, kannst du zur nächsten Seite fortfahren.",
+    ]
+
+
+# Anzeige
+header.info(Anleitung[st.session_state.Anleitung_int_Datenbank], icon="ℹ️", width="stretch")
+
+
+with header.form("Anleitung"):
+
+    # Buttons
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.session_state.Anleitung_int_Datenbank > 0:
+            zurück_hide = False
+        else:
+            zurück_hide = True
+        if st.form_submit_button("← zurück", use_container_width=True, disabled=zurück_hide):
+            st.session_state.Anleitung_int_Datenbank -= 1
+
+    with col2:
+        if st.session_state.Anleitung_int_Datenbank < len(Anleitung) - 1:
+            if st.form_submit_button("vor →", use_container_width=True):
+                st.session_state.Anleitung_int_Datenbank += 1
+
+
+#---------------------------------------------------------
+#---------------------------------------------------------
+
 st.subheader("Willkommen bei der Datenbank von FibreAI.")
 st.write("In der Datenbank kann sich angeschaut werden wieviele Querschnittsbilder bisher von den unterschiedlichen Faserarten erstellt wurden. Die Datenbank wird dabei regelmäßig aktualisiert und erweitert.")
 st.subheader("Und wozu das ganze?")
@@ -115,7 +189,7 @@ st.subheader("Auswahl der einzelnen Klassen:")
 # Reale Daten - WP_Textil
 st.subheader("Reale Daten")
 A1, A2, A3, A4, A5, A6, A7 = st.columns(7)
-link = glink + "/Real/"
+link = "/opt/lampp/htdocs/Webseite_SHK/streamlit/BildDatenbank/Real/"
 with A1:
     newlink = link + "Flachs/FL0001.tif"
     image = changepicturetosee(newlink, screen)
@@ -146,7 +220,7 @@ with A7:
     st.image(image)
 
 A1, A2, A3, A4, A5, A6, A7 = st.columns(7)
-BilderPath = "BildDatenbank/Real/"
+BilderPath = "/opt/lampp/htdocs/Webseite_SHK/streamlit/BildDatenbank/Real/"
 with A1:
     bvf.templateStrings(DBKlassen, BilderPath + "Flachs")
 with A2:
@@ -180,7 +254,7 @@ with A7:
 
 # Synthetische Daten - Synthetic
 st.subheader("Synthetische Daten")
-link = "BildDatenbank/Synthetisch/"
+link = "/opt/lampp/htdocs/Webseite_SHK/streamlit/BildDatenbank/Synthetisch/"
 B1, B2, B3, B4, B5, B6, B7 = st.columns(7)
 with B1:
     newlink = link + "Flachs/FL0001.jpg"
@@ -213,7 +287,7 @@ with B7:
 
 
 B1, B2, B3, B4, B5, B6, B7 = st.columns(7)
-BilderPath = "BildDatenbank/Synthetisch/"
+BilderPath = "/opt/lampp/htdocs/Webseite_SHK/streamlit/BildDatenbank/Synthetisch/"
 with B1:
     bvf.templateStrings(DBKlassen, BilderPath + "Flachs")
 with B2:
@@ -254,12 +328,14 @@ datenbank = getArrayfordatabank(datenbank, FlachsReal, SeideReal, rWolleReal, me
 st.session_state.datenbank = datenbank
 datenbank_bilderPath = bvf.getdatenbankBilderPath(datenbank_bilderPath, datenbank,1)
 st.session_state.datenbank_bilderPath = datenbank_bilderPath
+if datenbank:
+    st.session_state.datenbank_set = True
 
 #Mitteilung für die Aushwal der Datenbank
 if not datenbank:
     st.warning("Es wurde keine Bild-Datenbank ausgewählt, wähle bitte eine Datenbank aus.")
 if datenbank:
-    st.success("Es wurde eine Bild-Datenbank ausgewählt, fahre auf der nächsten Seite fort.")
+    st.success("Es wurde mind. eine Bild-Datenbank ausgewählt, fahre auf der nächsten Seite fort.")
 
 col1, col2 = st.columns(2)
 with col1:
@@ -269,18 +345,7 @@ with col2:
 
 #-------------------------------------------------------------------------------------------
 ### Seitenleiste
-# Öffne das Bild
-image = Image.open("webpictures/fibreai.png")
-
-# Konvertiere das Bild in Base64
-buffer = BytesIO()
-image.save(buffer, format="PNG")
-buffer.seek(0)
-data = base64.b64encode(buffer.read()).decode("utf-8")
-
-# Benutzerdefiniertes HTML mit Base64-Bild
-#st.sidebar.header("FibreAI")
-image = Image.open("webpictures/fibreai.png")
-st.sidebar.image(image)
+image = Image.open("/opt/lampp/htdocs/Webseite_SHK/streamlit/webpictures/fibreai.png")
+st.logo(image, icon_image=image, size="large")
 
 

@@ -4,16 +4,16 @@ import io
 import tensorflow as tf
 
 from PIL import Image
-#from tensorflow import keras
-#from tensorflow.keras import layers
-#from tensorflow.keras.models import load_model, Sequential
-#from tensorflow.keras.preprocessing.image import ImageDataGenerator
-#from sklearn.model_selection import train_test_split
-#from tensorflow.keras.utils import to_categorical
-#from tensorflow.keras.callbacks import Callback
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras.models import load_model, Sequential
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.callbacks import Callback
 from plotly import graph_objects as go
 import matplotlib.pyplot as plt
-#import seaborn as sns
+import seaborn as sns
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 from PIL import Image
 import base64
@@ -30,7 +30,7 @@ import importlib.util
 #---------------------------------------------------------
 # Absoluter oder relativer Pfad zur Datei
 #import bildverarbeitungFunction
-file_path = 'pages/bibliotheken/bildverarbeitungFunction.py'
+file_path = '/opt/lampp/htdocs/Webseite_SHK/streamlit/pages/bibliotheken/bildverarbeitungFunction.py'
 
 # Modul dynamisch importieren
 spec = importlib.util.spec_from_file_location("bildverarbeitungFunction", file_path)
@@ -79,9 +79,10 @@ def startModel(batch_size, image_size, epoch, model_name, class_images):
         #st.write(train.save_dir)
 
         #speichern des trainierten Modells in model_saved in zielPath
-        model_saved_file = os.path.join(class_images, "model_saved.txt")
+        model_saved_file = os.path.join(class_images, "model_saved.txt") #Pfad des Models
         pathtomodel = str(train.save_dir)
-        with open(model_saved_file, "w") as f:
+
+        with open(model_saved_file, "w") as f: #trage Pfad des Models in Datei ein
             f.write(pathtomodel)
             if os.path.isfile(model_saved_file) is True:
                 st.success(f"Modelpfad wurde erfolgreich gespeichert in {class_images} unter **model_saved.txt**. \n\n Falls dein Model auf der nächsten Seite nicht erfolgreich erkannt wird. So kannst du es problemlos wieder laden.")
@@ -173,6 +174,7 @@ def show_function(functionToShow):
         """
     elif functionToShow == "YOLO8":
         lines = """
+        if model_name == "YOLO8":
         model = YOLO("yolov8n-cls.pt")  # load a pretrained model (recommended for training)
         model.add_callback("on_train_start", on_train_start)
         counter = 0
@@ -193,6 +195,25 @@ def show_function(functionToShow):
         """
     st.code(lines)
 
+
+def readYoloArgs(pathtomodel):
+    args_file = "args.yaml"
+    data = ""
+    model_name = ""
+    with open(os.path.join(pathtomodel, args_file), "r") as f:
+        for line in f:
+            if "data" in line:
+                data = line.strip()  # strip() entfernt Leerzeichen und Zeilenumbrüche
+                data = data.split()[1]
+            if "model" in line:
+                model_name = line.strip()
+                model_name = model_name.split()[1]
+                if "yolov8" in model_name:
+                    model_name = "YOLO8"
+                else:
+                    model_name = "YOLO11"
+
+    return data, model_name
 
 
 

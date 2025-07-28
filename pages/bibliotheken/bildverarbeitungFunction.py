@@ -5,11 +5,14 @@ from pathlib import Path
 import random
 import shutil
 import glob
-from PIL import Image
 from distutils.dir_util import copy_tree # copy Images
 import inspect # show function
 import streamlit as st
 import os
+import time
+
+
+data_path = "/opt/lampp/htdocs/Webseite_SHK/streamlit/"
 
 
 #-----------------------------------------------------------
@@ -75,7 +78,7 @@ def templateStrings(dbNames, BilderPath, allowed_extensions=None):
 def getdatenbankBilderPath(datenbank_bilderPath, datenbank, number):  # erstellt Datenbank-Verzeichnisspfade
     #print("getdatenbankBilderPath")
     datenbank_bilderPath.clear()
-    bilderpath = "BildDatenbank/"
+    bilderpath = f"{data_path}BildDatenbank/" #/opt/lampp/htdocs/Webseite_SHK/streamlit/
     if number == 1:
         for daten in datenbank:
             secondName = daten[-4:]  # Real, Synt
@@ -106,6 +109,7 @@ def getdatenbankBilderPath(datenbank_bilderPath, datenbank, number):  # erstellt
             if os.path.exists(path):
                 datenbank_bilderPath.append(path)
 
+
         return datenbank_bilderPath
 
 def changeNamesofDatenbankforDVB(array):  # ändert nur den Anzeigenamen im Info für die ausgewählten Datenbanken
@@ -127,12 +131,18 @@ def changeNamesofDatenbankforDVB(array):  # ändert nur den Anzeigenamen im Info
         print(secondName)
         if secondName == "Synt":
             secondName = "Synthetisch"
-        ordner_namen.append(firstName + " " + "(" + secondName.lower() + ")")
+        append_name = firstName + " " + "(" + secondName + ")"
+
+        # Ersetze kaputten "(r (eal))" durch "(real)"
+        if "(r (eal))" in append_name:
+            append_name = append_name.replace("(r (eal))", "(Real)")
+        ordner_namen.append(append_name)
 
     return ordner_namen
 
 def getNamesofDatenbank(datenbank_bilderPath):  # erstellt die Ordner_Namen zum erstellen der Ordner im ZielPath
-    #print("getNamesofDatenbank")
+
+    print("datenbank_bilderPath: ", datenbank_bilderPath)
     ordner_namen = []
     for daten in datenbank_bilderPath:
         # newname = daten.split()
@@ -375,19 +385,18 @@ def lookforpictures(zielPath):
 #--------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------
 # Zur Löschung / Bereinigung der Bilder im Klassenordner
-def clearImages(zielPath, ordner_namen):
+def clearImages(zielPath):
     #print("clearImages")
     #ordner_namen = ["merzWolle", "Seide", "Flachs", "rWolle"]
     # Zielpfad zu bestehendem Ordner im Zielordner
+    ordner_namen = os.listdir(zielPath)
     for ordner in ordner_namen:
         zielOrdner = os.path.join(zielPath, ordner)
         if os.path.exists(zielOrdner):
-            for file in os.listdir(zielOrdner):
-                file_path = os.path.join(zielOrdner, file)  # Vollständiger Pfad
-                try:
-                    os.remove(file_path)  # Datei löschen
-                except Exception as e:
-                    print(f"Fehler beim Löschen der Datei {file_path}: {e}")
+            try:
+                os.remove(zielOrdner)  # Ordner löschen
+            except Exception as e:
+                print(f"Fehler beim Löschen der Datei {zielOrdner}: {e}")
 
 # Kopiere Bilder aus Datenbank oder Uploads des Users
 def copyImages(DBselection, ordner_namen, dbselectedPath, zielPath):
@@ -404,11 +413,11 @@ def copyImages(DBselection, ordner_namen, dbselectedPath, zielPath):
                 #hier wählt der genau die Ordner aus, die sich im exakten Pfad befinden
                 from_directory = dbselectedPath
                 namePath = str(path)  # Pfad mit oder ohne / am Ende
-                #print("namepath: ", namePath)
+                print("namepath: ", namePath)
                 namePath1 = namePath.split("/")[-2]  # OrdnerName
                 namePath2 = namePath.split("/")[-3]  # Real, Synt
-                #print("namepath: ", namePath1)
-                #print("namepath2: ", namePath2)
+                print("namepath: ", namePath1)
+                print("namepath2: ", namePath2)
                 newNamePath = namePath1 + " " + "(" + namePath2 + ")"
                 #und kopiert diese ins Zielpfad --> Exakter Ordner ins Zielpfad...
                 to_directory = zielPath + newNamePath
@@ -418,19 +427,25 @@ def copyImages(DBselection, ordner_namen, dbselectedPath, zielPath):
             if isinstance(dbselectedPath, list):
                 for path in dbselectedPath:
                     namePath = str(path) #Pfad mit oder ohne / am Ende
-                    #print("namepath: ", namePath)
+                    print("namepath: ", namePath)
                     namePath1 = namePath.split("/")[-2] #OrdnerName
                     namePath2 = namePath.split("/")[-3]  # Real, Synt
-                    #print("namepath: ", namePath1)
-                    #print("namepath2: ", namePath2)
+                    print("namepath: ", namePath1)
+                    print("namepath2: ", namePath2)
                     newNamePath = namePath1 + " " + "(" + namePath2 + ")"
-                    #print("newNamePath: ", newNamePath)
+                    print("newNamePath: ", newNamePath)
 
                     from_directory = path
-                    #print("from_directory: ", from_directory)
+                    print("from_directory: ", from_directory)
                     to_directory = zielPath + newNamePath
-                    copy_tree(from_directory, to_directory)
-                    success = True
+                    print("to_directory: ", to_directory)
+                    if os.path.exists(to_directory):
+                        copy_tree(from_directory, to_directory)
+                        success = True
+                    if not os.path.exists(to_directory):
+                        os.mkdir(to_directory)
+                        copy_tree(from_directory, to_directory)
+                        success = True
 
         # Verarbeiten von "Eigene Bilder"
         elif DBselection == "Eigene Bilder":
@@ -439,10 +454,14 @@ def copyImages(DBselection, ordner_namen, dbselectedPath, zielPath):
                     #print("file: ", file)
                     filename = file.name
                     #print("filename: ", filename)
-                    #zielOrdner = os.path.join(zielPath, ordner)
+                    zielOrdner = os.path.join(zielPath, ordner)
+                    print("zielOrdner: ", zielOrdner)
+                    if not os.path.exists(zielOrdner):
+                        os.mkdir(zielOrdner)
                     zielDateiPfad = os.path.join(zielPath, ordner, filename)
                     #print("zielDateiPfad: ", zielDateiPfad)
                     # Dateiinhalt speichern
+                    file.seek(0)  # Lesekopf auf Anfang
                     with open(zielDateiPfad, "wb") as f:
                         f.write(file.read())
                         success = True
@@ -516,7 +535,7 @@ def schwarzweiß(image):
         return False
 
 def schneiden(image, percentage):
-    #print("schneiden")
+    print("schneiden")
     #percentage = Zuschneiden in %
     try:
         # Bildgröße ausmessen
@@ -835,120 +854,139 @@ def show_images(zielOrdner, ordner_namen):
         st.write(f"Fehler bei der ShowImages-Funktion: {e}")
 
 def setTestBilder(zielOrdner, ordner_namen):
-    # zielOrdner = Ordnerpfad
-    # ordner_namen = einzelne Ordner die durchgegangen werden sollen
-    # test_anzahl = Anzahl der Testbilder die gespeichert werden sollen
+    try:
+        print("setTestBilder")
+        # zielOrdner = Ordnerpfad
+        # ordner_namen = einzelne Ordner die durchgegangen werden sollen
+        # test_anzahl = Anzahl der Testbilder die gespeichert werden sollen
 
-    test_ordner_liste = []
+        test_ordner_liste = []
 
-    for ordner in ordner_namen:
-        # Pfade setzen
-        ordnerpfad = os.path.join(zielOrdner, ordner)
-        testordnerpfad = os.path.join(zielOrdner, f"{ordner}_test")
-        test_ordner_liste.append(testordnerpfad)
+        for ordner in ordner_namen:
+            # Pfade setzen
+            ordnerpfad = os.path.join(zielOrdner, ordner)
+            testordnerpfad = os.path.join(zielOrdner, f"{ordner}_test")
+            test_ordner_liste.append(testordnerpfad)
 
-        # Testordner erstellen (wenn er noch nicht existiert)
-        if not os.path.exists(testordnerpfad):
-            os.mkdir(testordnerpfad)
-            #print(f"Testordner erstellt: {testordnerpfad}")
-        else:
-            print(f"Testordner existiert bereits: {testordnerpfad}")
+            # Testordner erstellen (wenn er noch nicht existiert)
+            if not os.path.exists(testordnerpfad):
+                os.mkdir(testordnerpfad)
+                #print(f"Testordner erstellt: {testordnerpfad}")
+            else:
+                print(f"Testordner existiert bereits: {testordnerpfad}")
 
-        # Alle Bilder im Ordner
-        alle_bilder = os.listdir(ordnerpfad)
-        anzahl = len(alle_bilder)
-        #print(f"{ordner} hat {anzahl} Bilder.")
+            # Alle Bilder im Ordner
+            alle_bilder = os.listdir(ordnerpfad)
+            anzahl = len(alle_bilder)
+            #print(f"{ordner} hat {anzahl} Bilder.")
 
-        # Anzahl Testbilder bestimmen
-        if 5 < anzahl < 10:
-            test_anzahl = 5
-        elif 1 < anzahl <= 5:
-            test_anzahl = 1
-        elif anzahl >= 10:
-            test_anzahl = min(int(anzahl * 0.1), 10)
-        else:
-            test_anzahl = 0
+            # Anzahl Testbilder bestimmen
+            if 5 < anzahl < 10:
+                test_anzahl = 5
+            elif 1 < anzahl <= 5:
+                test_anzahl = 1
+            elif anzahl >= 10:
+                test_anzahl = min(int(anzahl * 0.1), 10)
+            else:
+                test_anzahl = 0
 
-        #print(f"Testbilder: {test_anzahl}")
+            #print(f"Testbilder: {test_anzahl}")
 
-        # Zufällig Bilder auswählen und verschieben
-        if test_anzahl > 0:
-            test_bilder = random.sample(alle_bilder, test_anzahl)
-            for bild in test_bilder:
-                quelle = os.path.join(ordnerpfad, bild)
-                ziel = os.path.join(testordnerpfad, bild)
-                shutil.move(quelle, ziel)
-                #print(f"Verschoben: {bild}")
+            # Zufällige Bilder auswählen und verschieben
+            if test_anzahl > 0:
+                test_bilder = random.sample(alle_bilder, test_anzahl)
+                for bild in test_bilder:
+                    quelle = os.path.join(ordnerpfad, bild)
+                    ziel = os.path.join(testordnerpfad, bild)
+                    time.sleep(0.1)
+                    shutil.move(quelle, ziel)
+                    #print(f"Verschoben: {bild}")
 
-    # Erstelle den Hauptordner "TEST"
-    haupt_test_ordner = os.path.join(zielOrdner, "test")
-    if not os.path.exists(haupt_test_ordner):
-        os.mkdir(haupt_test_ordner)
-        #print(f"Haupt-Testordner erstellt: {haupt_test_ordner}")
+        # Erstelle den Hauptordner "TEST"
+        haupt_test_ordner = os.path.join(zielOrdner, "test")
+        if not os.path.exists(haupt_test_ordner):
+            os.mkdir(haupt_test_ordner)
+            #print(f"Haupt-Testordner erstellt: {haupt_test_ordner}")
 
-    # Verschiebe alle _test-Ordner in TEST
-    for testordnerpfad in test_ordner_liste:
-        zielpfad = os.path.join(haupt_test_ordner, os.path.basename(testordnerpfad))
-        if not os.path.exists(zielpfad):  # doppelt vermeiden
-            shutil.move(testordnerpfad, zielpfad)
-            #print(f"{testordnerpfad} -» {zielpfad}")
+        # Verschiebe alle _test-Ordner in TEST
+        for testordnerpfad in test_ordner_liste:
+            zielpfad = os.path.join(haupt_test_ordner, os.path.basename(testordnerpfad))
+            if not os.path.exists(zielpfad):  # doppelt vermeiden
+                time.sleep(0.1)
+                shutil.move(testordnerpfad, zielpfad)
+                #print(f"{testordnerpfad} -» {zielpfad}")
+    except Exception as e:
+        print(f"Fehler bei der setTestBilder-Funktion: {e}")
 
 def setTrainAndValBilder(zielOrdner, ordner_namen):
-    # Erstelle train und val Ordner
-    train_ordner = os.path.join(zielOrdner, "train")
-    val_ordner = os.path.join(zielOrdner, "val")
+    try:
+        print("setTrainAndValBilder")
+        print(zielOrdner)
+        print(ordner_namen)
+        # Erstelle train und val Ordner
+        train_ordner = os.path.join(zielOrdner, "train")
+        val_ordner = os.path.join(zielOrdner, "val")
 
-    for ordner in ordner_namen:
-        ordnerpfad = os.path.join(zielOrdner, ordner)
-        # Bilder auflisten
-        alle_bilder = [f for f in os.listdir(ordnerpfad) if os.path.isfile(os.path.join(ordnerpfad, f))]
-        random.shuffle(alle_bilder)
+        for ordner in ordner_namen:
+            ordnerpfad = os.path.join(zielOrdner, ordner)
+            # Bilder auflisten
+            alle_bilder = [f for f in os.listdir(ordnerpfad) if os.path.isfile(os.path.join(ordnerpfad, f))]
+            random.shuffle(alle_bilder)
 
-        # Aufteilen in 70% train und 30% val
-        trenner = int(len(alle_bilder) * 0.7)
-        train_bilder = alle_bilder[:trenner]
-        val_bilder = alle_bilder[trenner:]
+            # Aufteilen in 70% train und 30% val
+            trenner = int(len(alle_bilder) * 0.7)
+            train_bilder = alle_bilder[:trenner]
+            val_bilder = alle_bilder[trenner:]
 
-        # Zielpfade erstellen (Klassenordner in train und val)
-        train_klassenordner = os.path.join(train_ordner, ordner)
-        val_klassenordner = os.path.join(val_ordner, ordner)
+            # Zielpfade erstellen (Klassenordner in train und val)
+            train_klassenordner = os.path.join(train_ordner, ordner)
+            val_klassenordner = os.path.join(val_ordner, ordner)
 
-        for pfad in [train_klassenordner, val_klassenordner]:
-            if not os.path.exists(pfad):
-                os.makedirs(pfad)
-                # Bilder verschieben
-        for bild in train_bilder:
-            shutil.move(os.path.join(ordnerpfad, bild), os.path.join(train_klassenordner, bild))
+            for pfad in [train_klassenordner, val_klassenordner]:
+                if not os.path.exists(pfad):
+                    os.makedirs(pfad)
+                    # Bilder verschieben
+            for bild in train_bilder:
+                shutil.move(os.path.join(ordnerpfad, bild), os.path.join(train_klassenordner, bild))
 
-        for bild in val_bilder:
-            shutil.move(os.path.join(ordnerpfad, bild), os.path.join(val_klassenordner, bild))
+            for bild in val_bilder:
+                shutil.move(os.path.join(ordnerpfad, bild), os.path.join(val_klassenordner, bild))
 
-    # Wenn alle Bilder verschoben sind, lösche den ursprünglichen Ordner
-    for ordner in ordner_namen:
-        ordnerpfad = os.path.join(zielOrdner, ordner)
-        if (
-                os.path.isdir(ordnerpfad)
-                and not os.listdir(ordnerpfad)
-                and ordner not in ["test", "train", "val"]
-        ):
-            os.rmdir(ordnerpfad)
-            print(f"Ordner {ordner} wurde gelöscht.")
+        # Wenn alle Bilder verschoben sind, lösche den ursprünglichen Ordner
+        print(zielOrdner)
+        for ordner in ordner_namen:
+            ordnerpfad = os.path.join(zielOrdner, ordner)
+            if (
+                    os.path.isdir(ordnerpfad)
+                    and not os.listdir(ordnerpfad)
+                    and ordner not in ["test", "train", "val"]
+            ):
+                os.rmdir(ordnerpfad)
+                print(f"Ordner {ordner} wurde gelöscht.")
+    except Exception as e:
+        print(f"Fehler beim löschen der Ordner in setTrainAndValBilder {e}")
 
 def get_all_unique_folder_names(root_path): #zeigt in KI-Training alle Unterordner -> Klassen
-    unique_folders = set()
-    exclude_folders = {"train", "test", "val"}
+    try:
+        print("get_all_unique_folder_names")
+        unique_folders = set()
+        exclude_folders = {"train", "test", "val"}
 
-    for dirpath, dirnames, filenames in os.walk(root_path):
-        for dirname in dirnames:
-            if dirname not in exclude_folders:
-                # "_test" entfernen, wenn vorhanden
-                clean_name = dirname.replace("_test", "").strip()
-                unique_folders.add(clean_name)
+        for dirpath, dirnames, filenames in os.walk(root_path):
+            for dirname in dirnames:
+                if dirname not in exclude_folders:
+                    # "_test" entfernen, wenn vorhanden
+                    clean_name = dirname.replace("_test", "").strip()
+                    unique_folders.add(clean_name)
 
-    return sorted(list(unique_folders))
+        return sorted(list(unique_folders))
+    except Exception as e:
+        print(f"Fehler bei der Funktion get_all_unique_folder_names {e}")
+        return False
 
 def count_images_in_folder(root_path): #zählt in KI-Training alle Bilder im Ordner
-    image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif'}
+    print("count_images_in_folder")
+    image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif', '.tif'}
     count = 0
 
     for dirpath, dirnames, filenames in os.walk(root_path):
@@ -958,4 +996,136 @@ def count_images_in_folder(root_path): #zählt in KI-Training alle Bilder im Ord
                 count += 1
 
     return count
+
+def try_delete_folder(path, retries=5):
+    print("try_delete_folder")
+    for _ in range(retries):
+        try:
+            shutil.rmtree(path)
+            print(f"{os.path.basename(path)} wurde gelöscht.")
+            return
+        except PermissionError as e:
+            print(f"Ordner blockiert, versuche erneut: {e}")
+            time.sleep(0.5)
+    print(f"Fehler beim Löschen von {path}")
+
+#prüft den ZielPfad auf alle Unterordner und perfekte Sortierung in Datenvorbereitung
+"""def proof_train_val_test_folder(root_path):
+    print("proof_train_val_test_folder")
+    print(root_path)
+    # Suche alle *test-Verzeichnisse im root_path
+    for item in os.listdir(root_path):
+        if item.endswith("_test") and os.path.isdir(os.path.join(root_path, item)):
+            original_klasse = item.replace("_test", "")
+            test_folder_path = os.path.join(root_path, item)
+
+            # Zielordner in train/val/test suchen, z.B. train/KlasseXY, val/KlasseXY, test/KlasseXY
+            for subset in ["train", "val", "test"]:
+                target_folder = os.path.join(root_path, subset, original_klasse)
+
+                if os.path.exists(target_folder):
+                    # Nur verschieben, wenn Zielordner existiert
+                    for file in os.listdir(test_folder_path):
+                        src_file = os.path.join(test_folder_path, file)
+                        dst_file = os.path.join(target_folder, file)
+                        try:
+                            time.sleep(0.2)
+                            shutil.move(src_file, dst_file)
+                        except Exception as e:
+                            print(f"Fehler beim Verschieben von {src_file} → {dst_file}: {e}")
+                else:
+                    print(f"Kein Zielordner gefunden für {original_klasse} in {subset}")
+
+            print(root_path)
+            try_delete_folder(test_folder_path)
+
+    # Kontrolle: Zähle die Bilder in train/val/test
+    print(root_path)
+    for subset in ["train", "val", "test"]:
+        path = os.path.join(root_path, subset)
+        if os.path.exists(path):
+            count = count_images_in_folder(path)
+            print(f"{subset}: {count} Bilder")
+        else:
+            print(f"{subset}-Ordner existiert nicht.")"""
+
+def proof_train_val_test_folder(root_path):
+    # Suche alle *test-Verzeichnisse im root_path
+    for item in os.listdir(root_path):
+        if item.endswith("_test") and os.path.isdir(os.path.join(root_path, item)):
+            original_klasse = item.replace("_test", "")
+            test_folder_path = os.path.join(root_path, item)
+
+            # Zielordner in train/val/test suchen, z.B. train/KlasseXY, val/KlasseXY, test/KlasseXY
+            for subset in ["train", "val", "test"]:
+                target_folder = os.path.join(root_path, subset, original_klasse)
+
+                if os.path.exists(target_folder):
+                    # Nur verschieben, wenn Zielordner existiert
+                    for file in os.listdir(test_folder_path):
+                        src_file = os.path.join(test_folder_path, file)
+                        dst_file = os.path.join(target_folder, file)
+                        try:
+                            shutil.move(src_file, dst_file)
+                        except Exception as e:
+                            print(f"Fehler beim Verschieben von {src_file} → {dst_file}: {e}")
+                else:
+                    print(f"Kein Zielordner gefunden für {original_klasse} in {subset}")
+
+            # Nach Verschiebung den _test-Ordner löschen
+            try:
+                shutil.rmtree(test_folder_path)
+                print(f"{item} wurde gelöscht.")
+            except Exception as e:
+                print(f"Fehler beim Löschen von {test_folder_path}: {e}")
+
+    # Kontrolle: Zähle die Bilder in train/val/test
+    for subset in ["train", "val", "test"]:
+        path = os.path.join(root_path, subset)
+        if os.path.exists(path):
+            count = count_images_in_folder(path)
+            print(f"{subset}: {count} Bilder")
+        else:
+            print(f"{subset}-Ordner existiert nicht.")
+
+
+def createEinstellungenListe(resize_check, drehen_check, schaerfen_check, crop_check, black_check, flip_check, split_check, bildformat_check, kontrast_check,
+                             rauschen_check, alpha_input, beta_input, split_number, kernel_input, bildformat_select, crop_input, resize_pictureGroesse):
+    #kernel_input = Input für Bildrauschen
+    #alpha_input und beta_input für Kontrast
+
+    try:
+        check_boxen = {resize_check, drehen_check, schaerfen_check, crop_check, black_check, flip_check, split_check, bildformat_check, kontrast_check,
+                             rauschen_check}
+        check_input = {alpha_input, beta_input, split_number, kernel_input, bildformat_select, crop_input, resize_pictureGroesse}
+        Einstellungen = []
+        for check in check_boxen:
+            name = getattr(check, 'description', 'Unbenannt')  # Falls .description nicht existiert, fallback
+            value = getattr(check, 'value', None)  # .value sollte True/False sein
+            Einstellungen.append((name, value))
+
+
+        return Einstellungen
+
+    except Exception as e:
+        print(f"Fehler bei createEinstellungenListe: ", {e})
+        return False
+
+
+def saveBildverarbeitungEinstellungen(zielPath, Einstellungen): #speichert die Einstellungen vom
+    try:
+        bva_saved_file = os.path.join(zielPath, "bva_saved.txt")
+        with open(bva_saved_file, "w") as f:
+            f.write("")
+
+            if os.path.isfile(bva_saved_file) is True:
+                print(f"BVA Einstellungen wurden erfolgreich gespeichert in {zielPath}.")
+
+            else:
+                print(f"Fehler beim Speichern der BVA Einstellungen in {zielPath}.")
+
+    except Exception as e:
+        print(f"Fehler bei saveBildverarbeitungEinstellungen: {e}")
+
+
 
