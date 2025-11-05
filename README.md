@@ -1,5 +1,5 @@
 # FibreAI
-1. Lade dir die Bilddatenbank herunter über den folgenden Link: https://drive.google.com/file/d/1CW7qCbqkyGF4hpw5ECM88Ed_g1IJcagw/view?usp=sharing <br>
+1. Lade dir die Bilddatenbank herunter über den folgenden Link: https://drive.google.com/file/d/1CW7qCbqkyGF4hpw5ECM88Ed_g1IJcagw/view?usp=sharing <br> und bitte auch die Dateien aus GitHub.
 2. Entpacke beide ZIP Dateien <br>
 3. Benenne den Ordner "streamlit_ohne_BildDatenbank" in "streamlit" um <br>
 4. Verschiebe den Ordner "BildDatenbank" in den Ordner "streamlit" <br>
