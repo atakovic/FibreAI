@@ -1,18 +1,1 @@
-# FibreAI
-1. Entpacke beide ZIP Dateien
-2. Benenne den Ordner "streamlit_ohne_BildDatenbank" in "streamlit" um
-3. Verschiebe den Ordner "BildDatenbank" in den Ordner "streamlit"
-4. Deine Struktur sollte wie folgt aussehen:
-
-streamlit \n\n
---BildDatenbank \n
---pages \n
---webpictures \n
---app.py \n
---... \n
---... \n
---... \n
-
-## Streamlit - Deploy Link
-### Achtung, noch nicht Online
-https://fibreai.streamlit.app/KI-Faseranalyse
+# FibreAI<br>1. Entpacke beide ZIP Dateien<br>2. Benenne den Ordner "streamlit_ohne_BildDatenbank" in "streamlit" um<br>3. Verschiebe den Ordner "BildDatenbank" in den Ordner "streamlit"<br>4. Deine Struktur sollte wie folgt aussehen:<br><br>streamlit \n\n<br>--BildDatenbank \n<br>--pages \n<br>--webpictures \n<br>--app.py \n<br>--... \n<br>--... \n<br>--... \n<br><br>## Streamlit - Deploy Link<br>### Achtung, noch nicht Online<br>https://fibreai.streamlit.app/KI-Faseranalyse<br>
