@@ -4,14 +4,14 @@
 3. Verschiebe den Ordner "BildDatenbank" in den Ordner "streamlit"
 4. Deine Struktur sollte wie folgt aussehen:
 
-streamlit
---BildDatenbank
---pages
---webpictures
---app.py
---...
---...
---...
+streamlit \n\n
+--BildDatenbank \n
+--pages \n
+--webpictures \n
+--app.py \n
+--... \n
+--... \n
+--... \n
 
 ## Streamlit - Deploy Link
 ### Achtung, noch nicht Online
